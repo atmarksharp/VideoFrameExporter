@@ -13,6 +13,9 @@ float vh = 0.0;
 float w = 0.0;
 float h = 0.0;
 float vsr = 0.0;
+float scaleRate = 0.8;
+
+float speed = 1.0;
 
 string currentDate(){
   struct tm *date;
@@ -46,6 +49,7 @@ string currentDateWithCount(){
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+  ofSetLogLevel(OF_LOG_NOTICE);
   video.loadMovie("/home/fu/Videos/Love-and-Math-videos/1.mp4");
   video.setVolume(0);
 
@@ -54,8 +58,13 @@ void ofApp::setup(){
   vh = video.getHeight();
   w = ofGetScreenWidth();
   h = ofGetScreenHeight();
+  
   // Calculate video scaling rate
-  vsr = (h / vh) * 0.8;
+  if(vh > vw){
+    vsr = (h / vh) * scaleRate;
+  }else{
+    vsr = (w / vw) * scaleRate;
+  }
 
   cout << currentDate() << endl;
 }
@@ -75,43 +84,43 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-  // cout << "ON : key " << key << endl;
+  ofLogVerbose() << "ON : key " << key << endl;
 
-  // when press [space] key
+  // [space]: toggle pause and resume
   if(key == 32){
     if(video.isPlaying()){
       bool paused = video.isPaused();
-      // const char* status = (!paused)? "[pause]": "[resume]";
-      // cout << "Video: " << status << endl;
-      video.setSpeed(1.0);
+
+      const char* status = (!paused)? "[pause]": "[resume]";
+      ofLogVerbose() << "Video: " << status << endl;
+
       video.setPaused(!paused);
     }else{
       // cout << "Video: [play]" << endl;
       video.play();
     }
-  // when press [e] key
-  }else if(key == 101){
+  // [e] or [s]: save frame
+  }else if(key == 101 || key == 115){
     string path = currentDateWithCount() + ".png";
     ofPixels* pix = new ofPixels();
 
     video.setPaused(true);
     pix->setFromPixels(video.getPixels(), vw, vh, OF_IMAGE_COLOR);
     ofSaveImage(*pix, path, OF_IMAGE_QUALITY_MEDIUM);
-    cout << "\nSaved frame to \"" << path << "\"" << endl;
-  // left key
+
+    ofLogNotice() << "\nSaved frame to \"" << path << "\"" << endl;
+  // left key: forward
   }else if(key == 356){
-    video.setPaused(false);
-    video.setSpeed(2.0);
-  // right key
+    video.setSpeed(speed);
+  // right key: backward
   }else if(key == 358){
-    video.setPaused(false);
-    video.setSpeed(-2.0);
+    video.setSpeed(-1.0 * speed);
   }
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-  // cout << "OFF: key " << key << endl;
+  ofLogVerbose() << "OFF: key " << key << endl;
 }
 
 //--------------------------------------------------------------
