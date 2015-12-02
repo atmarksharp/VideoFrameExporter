@@ -51,8 +51,20 @@ string currentDateWithCount(){
 //--------------------------------------------------------------
 void ofApp::setup(){
   ofSetLogLevel(OF_LOG_NOTICE);
-  video.loadMovie("/home/fu/Videos/Love-and-Math-videos/1.mp4");
+
+  ofFileDialogResult result = ofSystemLoadDialog("Select movie file...");
+  if(result.bSuccess == false){
+    ofLogWarning() << "SystemDialog canceled" << endl;
+    ofExit(1);
+  }
+
+  ofSleepMillis(300);
+  video.load(result.getPath());
   video.setVolume(0);
+
+  // WORKAROUND
+  video.play();
+  video.stop();
 
   // Get sizes
   vw = video.getWidth();
@@ -66,8 +78,6 @@ void ofApp::setup(){
   }else{
     vsr = (w / vw) * scaleRate;
   }
-
-  cout << currentDate() << endl;
 }
 
 //--------------------------------------------------------------
@@ -84,7 +94,11 @@ void ofApp::draw(){
 }
 
 void ofApp::applyVideoMatrix(){
+  bool stopped = video.isPaused();
   video.setSpeed(vVector * vSpeed);
+  if(stopped){
+    video.setPaused(true);
+  }
 }
 
 //--------------------------------------------------------------
@@ -101,7 +115,7 @@ void ofApp::keyPressed(int key){
 
       video.setPaused(!paused);
     }else{
-      // cout << "Video: [play]" << endl;
+      ofLogVerbose() << "Video: [play]" << endl;
       video.play();
     }
   // [e] or [s]: save frame
@@ -113,7 +127,7 @@ void ofApp::keyPressed(int key){
     pix->setFromPixels(video.getPixels(), vw, vh, OF_IMAGE_COLOR);
     ofSaveImage(*pix, path, OF_IMAGE_QUALITY_MEDIUM);
 
-    ofLogNotice() << "\nSaved frame to \"" << path << "\"" << endl;
+    ofLogWarning() << "\nSaved frame to \"" << path << "\"" << endl;
 
   // left key: forward
   }else if(key == 356){
@@ -137,7 +151,7 @@ void ofApp::keyPressed(int key){
     vSpeed = 2.0;
     applyVideoMatrix();
   // [9]: slow speed
-  }else if(key == 51){
+}else if(key == 57){
     vSpeed = 0.5;
     applyVideoMatrix();
   }
