@@ -15,7 +15,8 @@ float h = 0.0;
 float vsr = 0.0;
 float scaleRate = 0.8;
 
-float speed = 1.0;
+float vSpeed = 1.0;
+float vVector = 1.0;
 
 string currentDate(){
   struct tm *date;
@@ -58,7 +59,7 @@ void ofApp::setup(){
   vh = video.getHeight();
   w = ofGetScreenWidth();
   h = ofGetScreenHeight();
-  
+
   // Calculate video scaling rate
   if(vh > vw){
     vsr = (h / vh) * scaleRate;
@@ -80,6 +81,10 @@ void ofApp::draw(){
   ofScale(vsr,vsr);
   video.draw(0,0);
   ofPopMatrix();
+}
+
+void ofApp::applyVideoMatrix(){
+  video.setSpeed(vVector * vSpeed);
 }
 
 //--------------------------------------------------------------
@@ -109,12 +114,32 @@ void ofApp::keyPressed(int key){
     ofSaveImage(*pix, path, OF_IMAGE_QUALITY_MEDIUM);
 
     ofLogNotice() << "\nSaved frame to \"" << path << "\"" << endl;
+
   // left key: forward
   }else if(key == 356){
-    video.setSpeed(speed);
+    vVector = 1.0;
+    applyVideoMatrix();
   // right key: backward
   }else if(key == 358){
-    video.setSpeed(-1.0 * speed);
+    vVector = -1.0;
+    applyVideoMatrix();
+
+  // [0]: very slow speed
+  }else if(key == 48){
+    vSpeed = 0.25;
+    applyVideoMatrix();
+  // [1]: normal speed
+  }else if(key == 49){
+    vSpeed = 1.0;
+    applyVideoMatrix();
+  // [2]: fast speed
+  }else if(key == 50){
+    vSpeed = 2.0;
+    applyVideoMatrix();
+  // [9]: slow speed
+  }else if(key == 51){
+    vSpeed = 0.5;
+    applyVideoMatrix();
   }
 }
 
