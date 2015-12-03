@@ -15,7 +15,7 @@ float winY = 0.0;
 float w = 0.0;
 float h = 0.0;
 float vsr = 0.0;
-float scaleRate = 0.8;
+float scaleRate = 1.0;
 
 float vSpeed = 1.0;
 float vVector = 1.0;
