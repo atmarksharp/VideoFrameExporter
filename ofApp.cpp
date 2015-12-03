@@ -10,6 +10,8 @@ ofVideoPlayer video;
 
 float vw = 0.0;
 float vh = 0.0;
+float winX = 0.0;
+float winY = 0.0;
 float w = 0.0;
 float h = 0.0;
 float vsr = 0.0;
@@ -54,13 +56,14 @@ void ofApp::setup(){
 
   ofFileDialogResult result = ofSystemLoadDialog("Select movie file...");
   if(result.bSuccess == false){
-    ofLogWarning() << "SystemDialog canceled" << endl;
+    ofLogWarning() << "SystemDialog canceled";
     ofExit(1);
   }
 
   ofSleepMillis(300);
   video.load(result.getPath());
   video.setVolume(0);
+  video.setLoopState(OF_LOOP_NONE);
 
   // WORKAROUND
   video.play();
@@ -69,8 +72,11 @@ void ofApp::setup(){
   // Get sizes
   vw = video.getWidth();
   vh = video.getHeight();
-  w = ofGetScreenWidth();
-  h = ofGetScreenHeight();
+  w = ofGetWindowWidth();
+  h = ofGetWindowHeight();
+
+  winX = ofGetWindowPositionX();
+  winX = ofGetWindowPositionY();
 
   // Calculate video scaling rate
   if(vh > vw){
@@ -96,6 +102,7 @@ void ofApp::draw(){
 void ofApp::applyVideoMatrix(){
   bool stopped = video.isPaused();
   video.setSpeed(vVector * vSpeed);
+  ofLogNotice() << "Speed: " << vSpeed << ", Vector: " << vVector;
   if(stopped){
     video.setPaused(true);
   }
@@ -103,7 +110,7 @@ void ofApp::applyVideoMatrix(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-  ofLogVerbose() << "ON : key " << key << endl;
+  ofLogVerbose() << "ON : key " << key;
 
   // [space]: toggle pause and resume
   if(key == 32){
@@ -111,11 +118,11 @@ void ofApp::keyPressed(int key){
       bool paused = video.isPaused();
 
       const char* status = (!paused)? "[pause]": "[resume]";
-      ofLogVerbose() << "Video: " << status << endl;
+      ofLogNotice() << "Video: " << status;
 
       video.setPaused(!paused);
     }else{
-      ofLogVerbose() << "Video: [play]" << endl;
+      ofLogNotice() << "Video: [play]";
       video.play();
     }
   // [e] or [s]: save frame
@@ -159,7 +166,7 @@ void ofApp::keyPressed(int key){
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-  ofLogVerbose() << "OFF: key " << key << endl;
+  ofLogVerbose() << "OFF: key " << key;
 }
 
 //--------------------------------------------------------------
@@ -169,7 +176,8 @@ void ofApp::mouseMoved(int x, int y ){
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-
+  ofLogNotice() << "Position: " << x/w << "";
+  video.setPosition(x / w);
 }
 
 //--------------------------------------------------------------
