@@ -21,5 +21,6 @@ class ofApp : public ofBaseApp{
 
 	private:
 		void applyVideoMatrix();
+		void windowRefresh(int w, int h);
 
 };
