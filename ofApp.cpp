@@ -10,8 +10,6 @@ ofVideoPlayer video;
 
 float vw = 0.0;
 float vh = 0.0;
-float winX = 0.0;
-float winY = 0.0;
 float w = 0.0;
 float h = 0.0;
 float vsr = 0.0;
@@ -69,21 +67,7 @@ void ofApp::setup(){
   video.play();
   video.stop();
 
-  // Get sizes
-  vw = video.getWidth();
-  vh = video.getHeight();
-  w = ofGetWindowWidth();
-  h = ofGetWindowHeight();
-
-  winX = ofGetWindowPositionX();
-  winX = ofGetWindowPositionY();
-
-  // Calculate video scaling rate
-  if(vh > vw){
-    vsr = (h / vh) * scaleRate;
-  }else{
-    vsr = (w / vw) * scaleRate;
-  }
+  windowRefresh(ofGetWindowWidth(), ofGetWindowHeight());
 }
 
 //--------------------------------------------------------------
@@ -190,9 +174,25 @@ void ofApp::mouseReleased(int x, int y, int button){
 
 }
 
+void ofApp::windowRefresh(int w, int h){
+  // Get sizes
+  vw = video.getWidth();
+  vh = video.getHeight();
+  w = ofGetWindowWidth();
+  h = ofGetWindowHeight();
+
+  // Calculate video scaling rate
+  if(vh > vw){
+    vsr = (h / vh) * scaleRate;
+  }else{
+    vsr = (w / vw) * scaleRate;
+  }
+}
+
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
-
+  ofLogVerbose() << "Window resized to (" << w << ", " << h << ")";
+  windowRefresh(w,h);
 }
 
 //--------------------------------------------------------------
